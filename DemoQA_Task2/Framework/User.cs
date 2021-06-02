@@ -9,16 +9,16 @@ namespace DemoQA_Task2
 {
     public class User
     {
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public int Gender { get; set; }
-        public string Phone { get; set; }
-        public string DateOfBirth { get; set; }
-        public static string [] StateAndCity 
+        public string Name { get; private set; }
+        public string LastName { get; private set; }
+        public string Email { get; private set; }
+        public int Gender { get; private set; }
+        public string Phone { get; private set; }
+        public string DateOfBirth { get; private set; }
+        public string[] StateAndCity { get; private set; }
+        public static string [] GetStateAndCity ()
         { 
-            get 
-            {
+            
                 string[] StateAndCity = new string[2];
                 string[] State = { "NCR", "Uttar Pradesh", "Haryana", "Rajasthan" };
                 int numberState = RandomNumber(1, 5);
@@ -51,11 +51,11 @@ namespace DemoQA_Task2
                 }
 
                 return StateAndCity;
-            } 
+             
         }
-        public static string[] Subject 
+        public string [] Subject { get; private set; }
+        public static string[] GetSubject ()
         {
-            get {
                 int number = RandomNumber(0, 5);
                 if (number == 1)
                 {
@@ -78,18 +78,16 @@ namespace DemoQA_Task2
                     return new string[] { String.Empty };
                 }
     
-            }
         }
-        public string Address { get; set; }
-        public static int[] Hobby
+        public string Address { get; private set; }
+        public int[] Hobbies { get; private set; }
+        private static int[] GetHobby ()
         {
-            get
-            {
                 int[] quantity = new int[RandomNumber(1, 4)];
                 int number = RandomNumber(1, 4);
                 if (quantity.Length == 1)
                 {
-                    quantity[0] = RandomNumber(1, 4);
+                    quantity[0] = RandomNumber(0, 3);
                 }
                 else if (quantity.Length == 3)
                 {
@@ -114,6 +112,13 @@ namespace DemoQA_Task2
                 }
 
                 return quantity;
+        }
+
+        private static int Year
+        {
+            get
+            {
+                return RandomNumber(1900, DateTime.Now.Year);
             }
         }
         private static int Month 
@@ -142,7 +147,13 @@ namespace DemoQA_Task2
             }
         }
 
-        
+        private static DateTime Birthday
+        {
+            get
+            {
+                return new DateTime(Year, Month, Day);
+            }
+        }
 
         public static User GetUserInfo()
         {
@@ -153,9 +164,11 @@ namespace DemoQA_Task2
                 Email = "john.johnson@email.com",
                 Gender = RandomNumber(1, 4),
                 Phone = "1234567890",
-                DateOfBirth = new DateTime(RandomNumber(1900, DateTime.Now.Year), Month, Day)
-                    .ToString("dd/MMM/yyyy", CultureInfo.CreateSpecificCulture("en-US")),
-                Address = "New Street",
+                Hobbies = GetHobby(),
+                StateAndCity = GetStateAndCity(),
+                Subject = GetSubject(),
+                DateOfBirth = Birthday.ToString("dd/MMM/yyyy", CultureInfo.CreateSpecificCulture("en-US")),
+                Address = "New Street, 01",
             };
         }
         

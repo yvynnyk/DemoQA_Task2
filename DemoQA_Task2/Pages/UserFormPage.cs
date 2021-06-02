@@ -14,6 +14,7 @@ namespace DemoQA_Task2
         WebDriverWait wait => new WebDriverWait(Driver, TimeSpan.FromSeconds(5)); 
         IWebElement firstName => Driver.FindElement(By.Id("firstName"));
         IWebElement lastName => Driver.FindElement(By.Id("lastName"));
+        IWebElement userGender(int gender) => Driver.FindElement(By.XPath($"//label[@for='gender-radio-{gender}']"));
         IWebElement userEmail => Driver.FindElement(By.Id("userEmail"));
         IWebElement userNumber => Driver.FindElement(By.Id("userNumber"));
         IWebElement subjectInput => Driver.FindElement(By.Id("subjectsInput"));
@@ -22,7 +23,27 @@ namespace DemoQA_Task2
         IWebElement userState => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id("react-select-3-input")));
         IWebElement userCity => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id("react-select-4-input")));
         IWebElement dateOfBirthInput => Driver.FindElement(By.Id("dateOfBirthInput"));
-        IWebElement buttonSubmit => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id("submit")));
+        
+        private static void StateAndCity(string data, IWebElement element)
+        {
+            element.SendKeys(data + Keys.Enter);
+        }
+        private static void EnterSubject(string[] subjects, IWebElement element)
+        {
+            for (int i = 0; i < subjects.Length; i++)
+            {
+                element.SendKeys(subjects[i]);
+                element.SendKeys(Keys.Enter);
+            }
+        }
+        private static void EnterHobby(int[] quantity, IReadOnlyCollection<IWebElement> element)
+        {
+            for (int i = 0; i < quantity.Length; i++)
+            {
+                element.ElementAt(quantity[i]).Click();
+            }
+        }
+
         public UserFormPage Register(User user)
         {
             //Elements are in such order due to the fact, that only name, lastname, phone and gender are needed
@@ -32,22 +53,10 @@ namespace DemoQA_Task2
 
             currentAddress.SendKeys(user.Address);
 
-            var StateAndCity = User.StateAndCity;
-            userState.SendKeys(StateAndCity[0] + Keys.Enter);
-            userCity.SendKeys(StateAndCity[1] + Keys.Enter);
-
-            var subjects = User.Subject;
-            for (int i = 0; i < subjects.Length; i++)
-            {
-                subjectInput.SendKeys(subjects[i]);
-                subjectInput.SendKeys(Keys.Enter);
-            }
-
-            var quantity = User.Hobby;
-            for (int i = 0; i < quantity.Length; i++)
-            {
-                userHobbies.ElementAt(quantity[i]).Click();
-            }
+            StateAndCity(user.StateAndCity[0], userState);
+            StateAndCity(user.StateAndCity[1], userCity);
+            EnterSubject(user.Subject, subjectInput);
+            EnterHobby(user.Hobbies, userHobbies);
 
             dateOfBirthInput.SendKeys(Keys.Control + "A");
             dateOfBirthInput.SendKeys(user.DateOfBirth + Keys.Enter);
@@ -55,7 +64,8 @@ namespace DemoQA_Task2
             firstName.SendKeys(user.Name);
             lastName.SendKeys(user.LastName);
             userEmail.SendKeys(user.Email);
-            Driver.FindElement(By.XPath($"//label[@for='gender-radio-{user.Gender}']")).Click();
+
+            userGender(user.Gender).Click();
 
             userNumber.SendKeys(user.Phone + Keys.Enter);
 
