@@ -11,63 +11,63 @@ namespace DemoQA_Task2
         public UserFormPage(IWebDriver driver) : base(driver)
         {
         }
-        WebDriverWait wait => new WebDriverWait(Driver, TimeSpan.FromSeconds(5)); 
-        IWebElement firstName => Driver.FindElement(By.Id("firstName"));
-        IWebElement lastName => Driver.FindElement(By.Id("lastName"));
-        IWebElement userGender(int gender) => Driver.FindElement(By.XPath($"//label[@for='gender-radio-{gender}']"));
-        IWebElement userEmail => Driver.FindElement(By.Id("userEmail"));
-        IWebElement userNumber => Driver.FindElement(By.Id("userNumber"));
-        IWebElement subjectInput => Driver.FindElement(By.Id("subjectsInput"));
+        WebDriverWait Wait => new WebDriverWait(Driver, TimeSpan.FromSeconds(5)); 
+        IWebElement FirstName => Wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("firstName")));
+        IWebElement LastName => Driver.FindElement(By.Id("lastName"));
+        IWebElement UserGender(int gender) => Driver.FindElement(By.XPath($"//label[@for='gender-radio-{gender}']"));
+        IWebElement UserEmail => Driver.FindElement(By.Id("userEmail"));
+        IWebElement UserNumber => Driver.FindElement(By.Id("userNumber"));
+        IWebElement SubjectInput => Driver.FindElement(By.Id("subjectsInput"));
         IReadOnlyCollection<IWebElement> userHobbies => Driver.FindElements(By.CssSelector("label[for^='hobbies-checkbox']"));
-        IWebElement currentAddress => Driver.FindElement(By.Id("currentAddress"));
-        IWebElement userState => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id("react-select-3-input")));
-        IWebElement userCity => wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id("react-select-4-input")));
-        IWebElement dateOfBirthInput => Driver.FindElement(By.Id("dateOfBirthInput"));
-        
-        private static void StateAndCity(string data, IWebElement element)
+        IWebElement CurrentAddress => Driver.FindElement(By.Id("currentAddress"));
+        IWebElement UserState => Driver.FindElement(By.Id("react-select-3-input"));
+        IWebElement UserCity => Wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id("react-select-4-input")));
+        IWebElement DateOfBirthInput => Driver.FindElement(By.Id("dateOfBirthInput"));
+        IWebElement ButtonSubmit => Wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id("submit")));
+        private static void EnterState(string[] stateandcity, IWebElement State)
         {
-            element.SendKeys(data + Keys.Enter);
+            State.SendKeys(stateandcity[0] + Keys.Tab);
         }
-        private static void EnterSubject(string[] subjects, IWebElement element)
+        private static void EnterCity(string[] stateandcity, IWebElement City)
+        {
+            City.SendKeys(stateandcity[1] + Keys.Tab);
+        }
+        private static void EnterSubject(string[] subjects, IWebElement Subject)
         {
             for (int i = 0; i < subjects.Length; i++)
             {
-                element.SendKeys(subjects[i]);
-                element.SendKeys(Keys.Enter);
+                Subject.SendKeys(subjects[i] + Keys.Tab);
             }
         }
-        private static void EnterHobby(int[] quantity, IReadOnlyCollection<IWebElement> element)
+        private static void EnterHobby(int[] quantity, IReadOnlyCollection<IWebElement> Elements)
         {
             for (int i = 0; i < quantity.Length; i++)
             {
-                element.ElementAt(quantity[i]).Click();
+                Elements.ElementAt(quantity[i]).Click();
             }
+        }
+
+        private static void EnterBirthDay(IWebElement birthdayinput, string date)
+        {
+            birthdayinput.SendKeys(Keys.Control + "A");
+            birthdayinput.SendKeys(date + Keys.Enter);
         }
 
         public UserFormPage Register(User user)
         {
-            //Elements are in such order due to the fact, that only name, lastname, phone and gender are needed
-            //to submit form. For Subjects, State and City Key.Enter is used, so all form will be submitted even without
-            //all fields fulfilled. So, the Execption will be generated and test will be failed. Instead of Submit button
-            //phonenumber + Key.Enter is used in order to submit form.
-
-            currentAddress.SendKeys(user.Address);
-
-            StateAndCity(user.StateAndCity[0], userState);
-            StateAndCity(user.StateAndCity[1], userCity);
-            EnterSubject(user.Subject, subjectInput);
+            FirstName.SendKeys(user.Name);
+            LastName.SendKeys(user.LastName);
+            UserEmail.SendKeys(user.Email);
+            UserGender(user.Gender).Click();
+            UserNumber.SendKeys(user.Phone);
+            EnterBirthDay(DateOfBirthInput, user.DateOfBirth);
+            EnterSubject(user.Subject, SubjectInput);
             EnterHobby(user.Hobbies, userHobbies);
-
-            dateOfBirthInput.SendKeys(Keys.Control + "A");
-            dateOfBirthInput.SendKeys(user.DateOfBirth + Keys.Enter);
-
-            firstName.SendKeys(user.Name);
-            lastName.SendKeys(user.LastName);
-            userEmail.SendKeys(user.Email);
-
-            userGender(user.Gender).Click();
-
-            userNumber.SendKeys(user.Phone + Keys.Enter);
+            CurrentAddress.SendKeys(user.Address);
+            EnterState(user.StateAndCity, UserState);
+            EnterCity(user.StateAndCity, UserCity);
+            
+            ButtonSubmit.Click();
 
             return new UserFormPage(Driver);
         }

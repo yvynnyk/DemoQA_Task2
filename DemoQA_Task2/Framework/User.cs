@@ -16,7 +16,7 @@ namespace DemoQA_Task2
         public string Phone { get; private set; }
         public string DateOfBirth { get; private set; }
         public string[] StateAndCity { get; private set; }
-        public static string [] GetStateAndCity ()
+        private static string [] GetStateAndCity ()
         { 
             
                 string[] StateAndCity = new string[2];
@@ -54,7 +54,7 @@ namespace DemoQA_Task2
              
         }
         public string [] Subject { get; private set; }
-        public static string[] GetSubject ()
+        private static string[] GetSubject ()
         {
                 int number = RandomNumber(0, 5);
                 if (number == 1)
@@ -147,6 +147,16 @@ namespace DemoQA_Task2
             }
         }
 
+        private static string GetPhoneNumber()
+        {
+            string[] phone = new string[10];
+            for (int i = 0; i < phone.Length; i++)
+            {
+                phone[i] = RandomNumber(0, 10).ToString();
+            }
+            return String.Join("", phone);
+        }
+
         private static DateTime Birthday
         {
             get
@@ -163,7 +173,7 @@ namespace DemoQA_Task2
                 LastName = "Johnson",
                 Email = "john.johnson@email.com",
                 Gender = RandomNumber(1, 4),
-                Phone = "1234567890",
+                Phone = GetPhoneNumber(),
                 Hobbies = GetHobby(),
                 StateAndCity = GetStateAndCity(),
                 Subject = GetSubject(),

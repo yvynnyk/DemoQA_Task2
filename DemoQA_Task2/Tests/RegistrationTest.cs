@@ -9,7 +9,7 @@ namespace DemoQA_Task2
     class RegistrationTest : BaseTest
     {
         private User _user;
-
+        private string successLoginMessage = "Thanks for submitting the form";
         [SetUp]
         protected void Initialize()
         {
@@ -21,7 +21,7 @@ namespace DemoQA_Task2
             UserFormPage userPage = SiteNavigator.NavigateToUserFormPage(Driver).Register(_user);
             WebDriverWait wait = new WebDriverWait(Driver, new TimeSpan(0, 0, 30));
             IWebElement confirmationMessage = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id("example-modal-sizes-title-lg")));
-            Assert.That("Thanks for submitting the form", Is.EqualTo(confirmationMessage.Text));
+            Assert.That(successLoginMessage, Is.EqualTo(confirmationMessage.Text));
         }
 
     }
