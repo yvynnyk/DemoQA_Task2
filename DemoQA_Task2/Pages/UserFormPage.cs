@@ -46,13 +46,11 @@ namespace DemoQA_Task2
                 Elements.ElementAt(quantity[i]).Click();
             }
         }
-
         private static void EnterBirthDay(IWebElement birthdayinput, string date)
         {
             birthdayinput.SendKeys(Keys.Control + "A");
             birthdayinput.SendKeys(date + Keys.Enter);
         }
-
         public UserFormPage Register(User user)
         {
             FirstName.SendKeys(user.Name);
